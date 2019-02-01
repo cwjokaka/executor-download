@@ -1,5 +1,6 @@
 package com.ls.downloader;
 
+import com.ls.util.FileUtils;
 import com.ls.util.HttpDownloadUtils;
 import com.ls.util.HttpUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -59,8 +60,13 @@ public class SegmentedDownloader implements Downloader {
             // 获取response的主体内容
             is = response.getEntity().getContent();
             File storeFile = new File(targetPath);
-            // 创建下载目录(没有的话)
-            boolean mkSuccess = storeFile.getParentFile().mkdirs();
+
+            if (!storeFile.exists()) {
+                // 创建下载目录(没有的话)
+                boolean mkSuccess = storeFile.getParentFile().mkdirs();
+            } else {
+                this.curBytes = FileUtils.getFileSize(storeFile);
+            }
 
             fos = new FileOutputStream(storeFile, true);
             bis = new BufferedInputStream(is);
